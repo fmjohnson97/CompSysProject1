@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]){
-
+FILE* fo = freopen("outputA.txt","w",stdout);
     char* fileName = argv[1];
     char buffer[1000];
     int max;
@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
     int tmp;
     int sum;
     
-    printf("The file name is %s\n", fileName);
+   // printf("The file name is %s\n", fileName);
     
     FILE* fp;
     fp=fopen(fileName, "r");
@@ -38,7 +38,8 @@ int main(int argc, char *argv[]){
       sum += tmp;
       bzero(buffer, 1000);
     }
-    printf("The max number is %d\nThe minimum number is %d\nThe Sum of the numbers is %d\n",max,min,sum);
+    printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+    printf("MAX=%d\nMIN=%d\nSUM=%d\n",max,min,sum);
     
-    
+    fclose(fo);
 }

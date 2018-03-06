@@ -9,6 +9,7 @@
 
 
 int main(int argc, char *argv[]){
+FILE* fo = freopen("outputB.txt","w",stdout);
 
 char* fileName = argv[1];
     char buffer[1000];
@@ -39,20 +40,25 @@ char* fileName = argv[1];
     
     FILE* fp;
     fp=fopen(fileName, "r");
-    fgets(buffer, 1000, fp);
-    tmp = atoi(buffer);
-    max = tmp;
-    min = tmp;
-    
+
     int ac=0;
      while(fgets(buffer, 1000, fp)!= NULL){
+     
+     if(ac==0){
+           max = tmp;
+           min = tmp;
+     }
+     
+     
+     
     tmp = atoi(buffer);
     array[ac]=tmp;
     //printf("%d\n",array[ac]); 
     ac++;
     }
     min=array[0];
-    printf("We are in main parent process and the PID is %d the parent process is %d\n",getpid(),getppid());  
+       //freopen("output.txt", "w", stdout); 
+    
     pid_t pid = fork();
 
     if (pid == 0){
@@ -64,19 +70,20 @@ char* fileName = argv[1];
       
       pid_t pid2 = fork();
       if (pid2 == 0){
-        printf("we are in greatgrandchild process the PID is %d the parent to the granchild's pid is %d\n",getpid(),getppid());
+        printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
         int k;
          for(k=0; k<count; k++){
            sum += array[k];
        }
-       printf("The sum is %d\n", sum);
+       
        pid1 = wait(NULL);
+       printf("Sum = %d\n", sum,array[0]);
         return; 
       }
       
       
       max=array[0];
-        printf("we are in grandchild process the PID is %d the parent to the granchild's pid is %d\n",getpid(),getppid());
+        printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
          int j;
          for(j=1; j<count-1; j++){
            if (array[j]>max){
@@ -92,12 +99,12 @@ char* fileName = argv[1];
        //close(mypipefd2[1]);
         
         pid2 = wait(NULL);
-        printf("The maximum is %d\n",max);
+        printf("Max = %d\n",max);
         return;
         
       }
       
-       printf("we are in child process the pid is %d and parent process pid is %d\n",getpid(),getppid());
+       printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
        int i;
       // printf("the 000000count is %d\n", count);
        for(i=0; i<count-1; i++){
@@ -118,14 +125,15 @@ char* fileName = argv[1];
 //     write(mypipefd[1], buffer, 1000);
 //     close(mypipefd[1]);
      pid1 = wait(NULL);
-     printf("The minimum number is %d\n",min);
+     printf("Min = %d\n",min);
    return;
      
    }
-    
+
    
-     
+     printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());  
       pid = wait(NULL);
+      	fclose(fo);
 //      
 //       bzero(buffer, 1000);
 //      read(mypipefd2[0],buffer,1000); // mypipefd[0] is input mypipefd[1] is output

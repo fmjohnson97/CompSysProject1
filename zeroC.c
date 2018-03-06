@@ -9,6 +9,7 @@
 
 
 int main(int argc, char *argv[]){
+    FILE * fo = freopen("outputC.txt","w",stdout);
     char* fileName = argv[1];
     char buffer[1000];
     int max=0;
@@ -45,7 +46,8 @@ int main(int argc, char *argv[]){
                  /*begining of the forking proccess*/
  
      pid_t pid,pid2;
-     //printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+     printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+     fflush(stdout); 
      int mypipefd[2];
      int thepipefd[2];
      int ret;
@@ -65,7 +67,8 @@ int main(int argc, char *argv[]){
      if(pid==0)
      //child process
      {
-    // printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+     printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+     fflush(stdout);  
          //printf("Child Process\n");
          close(mypipefd[0]);
          write(mypipefd[1], "** 1ST STARTING ** \n", 100);
@@ -93,7 +96,8 @@ int main(int argc, char *argv[]){
          if(pidMax==0)
          {//grandchildmax of child1
              //close(mypipefd1[0]);
-             //printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+             printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+             fflush(stdout);  
              int j;
              for(j=0; j<(count/2)+1; j++)
              {
@@ -119,7 +123,8 @@ int main(int argc, char *argv[]){
               if(pidMin==0)
               {//grandchildmin of child1
                   //close(mypipefd2[0]);
-                 // printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+                  printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+                  fflush(stdout);  
                   int i;
                   for(i=0; i<(count/2); i++)
                   {
@@ -164,22 +169,22 @@ int main(int argc, char *argv[]){
          //printf("Parent Process\n");
          //close(mypipefd[1]);
          read(mypipefd[0],buf, 100);
-         printf("child1 to main: %s",buf);
+         //printf("child1 to main: %s",buf);
          
          //bzero(buf,1000);
          read(mypipefd[0],buf,100);
          int max1 = atoi(buf);
-         printf("The MAX number of first half is: %s\n",buf);
+         //printf("The MAX number of first half is: %s\n",buf);
          
          bzero(buf,100);
          read(mypipefd[0],buf,100);
          int min1 = atoi(buf);
-         printf("The MIN number of first half is: %s\n",buf);        
+         //printf("The MIN number of first half is: %s\n",buf);        
          
          bzero(buf,100);
          read(mypipefd[0],buf,100);
          int sum1 = atoi(buf);
-         printf("The SUM of first half is: %s\n",buf);   
+         //printf("The SUM of first half is: %s\n",buf);   
          
         // printf("now i wanna fork the 2nd child process\n");
         
@@ -199,7 +204,8 @@ int main(int argc, char *argv[]){
          
          if(pid2==0)
          {
-         //printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+         printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+         fflush(stdout);  
              write(thepipefd[1],"** 2ND STARTING ** \n", 100);
              
              pid_t pidMax,pidMin;
@@ -226,7 +232,8 @@ int main(int argc, char *argv[]){
              
              if(pidMax==0)
              {//grandchildmax of child2
-             //printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+             printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+             fflush(stdout);  
                    int j;                     
                    for(j=(count/2); j<count; j++)
                    {
@@ -250,7 +257,8 @@ int main(int argc, char *argv[]){
                  
                    if(pidMin==0)
                    {
-                  // printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+                   printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+                   fflush(stdout); 
                        int i;
                        for(i=(count/2); i<count; i++)
                        {
@@ -292,34 +300,36 @@ int main(int argc, char *argv[]){
          
              bzero(buf2,100);
              read(thepipefd[0],buf2,100);
-             printf("child2 to main: %s",buf2);
+             //printf("child2 to main: %s",buf2);
              
              bzero(buf2,100);
              read(thepipefd[0],buf2,100);
              int max2 = atoi(buf2);
-             printf("The MAX number of 2nd half is %s\n",buf2);
+             //printf("The MAX number of 2nd half is %s\n",buf2);
              
              bzero(buf2,100);
              read(thepipefd[0],buf2,100);
              int min2 = atoi(buf2);
-             printf("The MIN number of 2nd half is %s\n",buf2);
+             //printf("The MIN number of 2nd half is %s\n",buf2);
              
              bzero(buf2,100);
              read(thepipefd[0],buf2,100);
              int sum2 = atoi(buf2);
-             printf("The SUM of second half is: %s\n",buf2);
+             //printf("The SUM of second half is: %s\n",buf2);
              
              /*comparison of max, min, and sum of child 1 and child 2*/
-             printf("THESE ARE THE OVERALL MAX,MIN,SUM VALUES\n");
+             //printf("THESE ARE THE OVERALL MAX,MIN,SUM VALUES\n");
              sum=sum1+sum2;
-             printf("The overall Sum is %d\n",sum);
+             printf("SUM=%d\n",sum);
+             fflush(stdout);
              
              pid_t oMin;
              oMin = fork();
              
              if(oMin==0)
              {
-                 // printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+                  printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+                  fflush(stdout); 
                  if(min1<min2)
                  {
                      min=min1;
@@ -327,14 +337,15 @@ int main(int argc, char *argv[]){
                  }else{
                      min=min2;  
                      }
-                  printf("The overall Minimum value is %d\n",min);
+                  printf("MIN=%d\n",min);
                  }else{
                   pid_t oMax;//getting forked twice
                  oMax = fork();
                  
                  if(oMax==0)
                  {
-                    // printf("I am PID %d my parent PID is %d\n",getpid(),getppid()); 
+                     printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+                     fflush(stdout); 
                      if(max1>max2)
                      {
                          max=max1;
@@ -343,7 +354,7 @@ int main(int argc, char *argv[]){
                          max=max2;
                        
                      }
-                      printf("The overeall Maximum is %d\n",max);
+                      printf("MAX=%d\n",max);
                  }else{
                  //do nothing
              }
@@ -351,7 +362,7 @@ int main(int argc, char *argv[]){
              }
              
             
-             
+             fclose(fo);
          }
          
          
