@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 #include <sys/types.h>
@@ -47,6 +49,7 @@ typedef struct tree_node
     FILE* fp;
     char* rootNode;
     int numChildren;
-    node headNode;//**head child node**
+    node firstBorn;//**head child node**
+   
 
 }tree_node;
