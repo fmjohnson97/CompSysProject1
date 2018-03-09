@@ -14,3 +14,9 @@ zeroB description:
 
 
 zeroC description:
+
+/*How to run 2*/
+
+first compile... gcc 2.c
+next run executable file ./a.out processTree.txt
+

@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 #include <sys/types.h>
@@ -50,6 +48,9 @@ typedef struct tree_node
     char* rootNode;
     int numChildren;
     node firstBorn;//**head child node**
-   
+    pid_t pid; 
+    char* processNum;
+    int procNumber;
+    char line[20];
 
 }tree_node;
