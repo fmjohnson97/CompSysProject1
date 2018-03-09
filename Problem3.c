@@ -50,7 +50,7 @@ tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 chil
     thestruct->numChildren = numKids;
     
     if(numKids==0){
-        kill -sigcont getppid();
+        kill(getppid(),SIGCONT);
         return thestruct;
     }
     
@@ -63,7 +63,7 @@ tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 chil
         {
             createTree(thestruct, stream);
             raise(SIGSTOP);//CHANGE THIS LINE; pause(raise(SIGSTOP)?) then child must send sigcont to parent
-            kill -sigcont getppid();
+            kill(getppid(),SIGCONT);
             return thestruct;
         }
     }
@@ -97,9 +97,10 @@ tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 chil
         if (pid == 0)
         {
             createTree(thestruct, firstBorn->data);
+            raise(SIGSTOP);
         }
-        raise(SIGSTOP);//REPLACE THIS LINE; pause then child must send sigcont to parent
-        kill -sigcont getppid();
+        //REPLACE THIS LINE; pause then child must send sigcont to parent
+        kill(getppid(),SIGCONT);
         return thestruct;
     }
 }
