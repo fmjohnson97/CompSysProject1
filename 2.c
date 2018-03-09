@@ -131,7 +131,7 @@ void print_tree(tree_node *thestruct,int* fd,int numKids)
     int i = 0;
     char buff[20];
      
-    for(i=1;i<numKids+3;i++)
+    for(i=0;i<(numKids);i++)
     {  
         bzero(buff,20);
         close(fd[2*i+1]);
@@ -148,7 +148,7 @@ void print_tree(tree_node *thestruct,int* fd,int numKids)
 
 int main(int argc, char *argv[])
 {       
-    //FILE *fo = freopen("output2.txt","w",stdout);
+   FILE *fo = freopen("output2.txt","w",stdout);
     
     char* fileName = argv[1];
     char buffer[100];
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
     countChildren = fopen(fileName,"r");
     fp = fopen(fileName,"r");
     sc = fopen(fileName,"r");
-    int procNum = 0; 
+    int procNum = -1; 
     char* letter;
     char convert[1]; 
     
@@ -175,7 +175,9 @@ int main(int argc, char *argv[])
     }
     
     char* pni = (char*)malloc((numKids*2)*sizeof(char)); // pni = process number identfier 
-      
+    
+   
+    
     while(fgets(buffer,100,sc))
     {
         letter = strtok(buffer," ");
@@ -188,7 +190,11 @@ int main(int argc, char *argv[])
         
     }  
       
+    // printf("%s\n\n\n\n\n",pni);
+     
+     
     int fd[2*numKids];
+    //printf("%d\n",numKids);
     int i = 0;
     
     for(i=0;i<numKids;i++)
@@ -204,7 +210,7 @@ int main(int argc, char *argv[])
     
       char* rootNode = initNode->rootNode;
       pid_t dummyPID = initNode->pid;
-      procNum = initNode->procNumber;
+      
 
       if(dummyPID == pid)
       {  
@@ -212,9 +218,12 @@ int main(int argc, char *argv[])
          print_tree(initNode,fd,numKids);  
       }
       else{//child process stuff 
+         procNum = initNode->procNumber;
+         //printf("%d\n",procNum);
          close(fd[2*procNum]);
          char* line = strdup(initNode->line); 
          write(fd[2*procNum+1],line,20);
+         close(fd[2*procNum + 1]); 
       } 
      //fclose(fo);
 }
