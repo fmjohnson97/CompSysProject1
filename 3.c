@@ -6,7 +6,26 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "2.h"
+
+bool wait_for_children(int pid)
+{
+    //if child A and child B and etc etc have paused then return true
+    //else return false
+    //return false if no children
+    
+    int status;
+    int result;
+    
+    waitpid(pid,&status,WUNTRACED);
+    result=WIFSTOPPED(status);
+    if(result !=0)
+    {
+        return true;
+    }
+    return false;
+}
 
 tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 children what should ident BE?
 {
@@ -54,9 +73,7 @@ tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 chil
             {
                 break;
             }
-            
         }
-        
     }
     sprintf(thestruct->line,"%s",buffer);
     char *rootNode = strtok(buffer," ");
@@ -69,8 +86,8 @@ tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 chil
     if(numKids==0){
         pid = getpid();
         thestruct->pid = pid;
-        char* rootNode = thestruct->rootNode;
         kill(getppid(),SIGCONT);
+        sleep(5);
         return thestruct;
     }
     
@@ -82,11 +99,13 @@ tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 chil
         if (pid==0)
         {
             createTree(thestruct, stream);
-            raise(SIGSTOP);//CHANGE THIS LINE; pause(raise(SIGSTOP)?) then child must send sigcont to parent
-            kill(getppid(),SIGCONT);
+            if(wait_for_children(getpid()))
+            {
+                raise(SIGSTOP);
+            }//pause then child must send sigcont to parent
             pid = getpid();
             thestruct->pid = pid;
-            
+            kill(getppid(),SIGCONT);
             return thestruct;
         }
     }
@@ -118,23 +137,18 @@ tree_node* createTree(tree_node *thestruct, char* ident) // when node has 0 chil
         if (pid == 0)
         {
             createTree(thestruct, firstBorn->data);
-            raise(SIGSTOP);
-        }
-        //REPLACE THIS LINE; pause then child must send sigcont to parent
-        kill(getppid(),SIGCONT);
+            if(wait_for_children(getpid()))
+            {
+                raise(SIGSTOP);
+            }
+        }// pause then child must send sigcont to parent
         pid = getpid();
         thestruct->pid = pid;
+        kill(getppid(),SIGCONT);
         return thestruct;
     }
-}
-
-void wait_for_children()
-{
-    //if child A and child B and etc etc have paused then return true
-    //can only tell using wait or wait pid but defeat purpose bc have to wait to get feeback?
-    //else return false
-    //return false if no children
-    
+    kill(getppid(),SIGCONT);
+    return thestruct;
 }
 
 void print_tree(tree_node *thestruct,int* fd,int numKids)
@@ -153,15 +167,11 @@ void print_tree(tree_node *thestruct,int* fd,int numKids)
         printf("%s",buff);
         fflush(stdout);
     }
-    
-    
-    
-    
 }
 
 int main(int argc, char *argv[])
 {
-    FILE *fo = freopen("output2.txt","w",stdout);
+    FILE *fo = freopen("output3.txt","w",stdout);
     
     char* fileName = argv[1];
     char buffer[100];
@@ -216,6 +226,7 @@ int main(int argc, char *argv[])
     initNode->processNum = pni;
     initNode->numChildren = 0;
     initNode = createTree(initNode, init);
+    //raise(SIGSTOP);
     
     char* rootNode = initNode->rootNode;
     pid_t dummyPID = initNode->pid;

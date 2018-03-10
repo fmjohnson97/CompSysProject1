@@ -22,6 +22,7 @@ int main(void)
     if(pid==0 && pid2==0)
     {
         printf("Start D with pid=%d\n",getpid());
+        sleep(8);
         //printf("D, my pid=%d, Parent's pid=%d\n",getpid(),getppid());
         printf("Terminate D with pid=%d\n",getpid());
         return 12;
