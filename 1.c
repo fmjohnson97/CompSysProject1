@@ -46,7 +46,7 @@ int main(void)
     }
     else
     {
-        printf("Start A with pid=%d\nA is waiting for children\n",getpid());
+        printf("Start A with pid=%d\nA is waiting for children B and C\n",getpid());
         waitpid(pid2,&status,0);
         retCode=WEXITSTATUS(status);
         printf("\tC's exit code = %d\n",retCode);
