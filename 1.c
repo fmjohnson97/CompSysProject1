@@ -29,7 +29,7 @@ int main(void)
     else if (pid==0)
     {
         printf("Start B with pid=%d\n",getpid());
-        printf("B is waiting for children\n");
+        printf("B is waiting for D\n");
         waitpid(pid2,&status,0);
         int retCode=WEXITSTATUS(status);
         printf("\tD's exit code = %d\n",retCode);
