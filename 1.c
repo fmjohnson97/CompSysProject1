@@ -13,7 +13,6 @@
 
 int main(void)
 {
-    printf("Parent PID = %d\n",getpid());
     pid_t pid=fork();
     pid_t pid2=fork();
     int status;
