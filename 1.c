@@ -17,11 +17,11 @@ int main(void)
     pid_t pid2=fork();
     int status;
     int retCode;
-
+    
     if(pid==0 && pid2==0)
     {
-        printf("Start D with pid=%d\n",getpid());
         sleep(5);
+        printf("Start D with pid=%d\n",getpid());
         //printf("D, my pid=%d, Parent's pid=%d\n",getpid(),getppid());
         printf("Terminate D with pid=%d\n",getpid());
         return 12;
@@ -29,7 +29,7 @@ int main(void)
     else if (pid==0)
     {
         printf("Start B with pid=%d\n",getpid());
-        printf("Wait for Child D with pid=%d\n", pid2);
+        printf("B is waiting for children\n");
         waitpid(pid2,&status,0);
         int retCode=WEXITSTATUS(status);
         printf("\tD's exit code = %d\n",retCode);
@@ -46,17 +46,15 @@ int main(void)
     }
     else
     {
-        printf("Start A with pid=%d\n",getpid());
-        printf("Wait for child C with pid=%d\n",pid2);
+        printf("Start A with pid=%d\nA is waiting for children\n",getpid());
         waitpid(pid2,&status,0);
         retCode=WEXITSTATUS(status);
-        printf("C's exit code = %d\n",retCode);
-        printf("Wait for child B with pid=%d\n", pid);
+        printf("\tC's exit code = %d\n",retCode);
         waitpid(pid,&status,0);
         retCode=WEXITSTATUS(status);
         printf("\tB's exit code = %d\n",retCode);
         //printf("A, my pid=%d, my exit code=%d\n",getpid(),5);
-        printf("Terminate A with pid=%d\n",getpid());
+        printf("Terminate A with pid=%d, exit code=%d\n",getpid(),5);
         return 5;
     }
 }
