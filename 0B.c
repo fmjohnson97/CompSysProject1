@@ -13,22 +13,25 @@ FILE* fo = freopen("outputB.txt","w",stdout);
 
 char* fileName = argv[1];
     char buffer[1000];
+    char mins[100];
+    char maxs[100];
+    char sums[100];
     int max;
     int min;
     int tmp;
     int sum=0;
     int count=0;
-    int mypipefd[2];
-    int mypipefd2[2];
+    int fdsum[2];
+    int fdmax[2];
+    int fdmin[2];
+    int nbytes;
+    pipe(fdmin);
+    pipe(fdmax);
+    pipe(fdsum);
     
     int ret;
     char buf[20];
-    
-    ret=pipe(mypipefd);
-    if(ret==-1){
-    perror("ERROR PIPE ERROR\n");
-    exit(1);
-    }
+
     FILE* fpcount;
     fpcount=fopen(fileName,"r");
    while(NULL!=fgets(buffer,1000,fpcount)){
@@ -58,32 +61,38 @@ char* fileName = argv[1];
     }
     min=array[0];
        //freopen("output.txt", "w", stdout); 
-    
+    printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());  
+    fflush(stdout);
     pid_t pid = fork();
-
     if (pid == 0){
-    
-      pid_t pid1 = fork();
+    printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+    fflush(stdout);
+    pid_t pid1 = fork();
+      
       if (pid1 == 0){
-      
-      
-      
+      printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid()); 
+      fflush(stdout); 
       pid_t pid2 = fork();
+      
       if (pid2 == 0){
-        printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+      printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+      fflush(stdout);
         int k;
+        
          for(k=0; k<count; k++){
            sum += array[k];
-       }
+         }
        
        pid1 = wait(NULL);
-       printf("Sum = %d\n", sum,array[0]);
+       
+       sprintf(sums,"Sum = %d\n", sum,array[0]);
+       close(fdsum[0]);
+        write(fdsum[1], sums, sizeof(sums));
         return; 
       }
       
       
       max=array[0];
-        printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
          int j;
          for(j=1; j<count-1; j++){
            if (array[j]>max){
@@ -99,69 +108,56 @@ char* fileName = argv[1];
        //close(mypipefd2[1]);
         
         pid2 = wait(NULL);
-        printf("Max = %d\n",max);
+        
+        sprintf(maxs,"Max = %d\n",max);
+        close(fdmax[0]);
+        write(fdmax[1], maxs, sizeof(maxs));
         return;
         
       }
       
-       printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());
+      
        int i;
       // printf("the 000000count is %d\n", count);
        for(i=0; i<count-1; i++){
          //printf("what is contained in array is %d\n",array[i]);
          if (array[i]<min){
            min=array[i];
-           
-          // printf("The NEW minimum number is %d\n",min);
-           //return;
+
        }
-        //printf("The minimum number is %d\n",min);
-       //return;
+
      }
-     //printf("The minimum number is %d\n",min);
-//    bzero(buffer, 1000);
-//     sprintf(buffer,"The minimum number is %d\n",min);
-//    close(mypipefd[0]);
-//     write(mypipefd[1], buffer, 1000);
-//     close(mypipefd[1]);
+
      pid1 = wait(NULL);
-     printf("Min = %d\n",min);
-   return;
      
+     sprintf(mins,"Min = %d\n",min);
+     close(fdmin[0]);
+     write(fdmin[1], mins, sizeof(mins));
+     return;
+     
+   }
+   else{
+   
+   close(fdmin[1]);
+   close(fdmax[1]);
+   close(fdsum[1]);
+   pid = wait(NULL);
+   nbytes = read(fdmin[0], mins, sizeof(mins));
+   nbytes = read(fdmax[0], maxs, sizeof(maxs));
+   nbytes = read(fdsum[0], sums, sizeof(sums));
+   printf("%s", maxs);
+   printf("%s", mins);
+   printf("%s", sums);
+   
    }
 
    
-     printf("Hi, I'm process %d and my parent is %d\n",getpid(),getppid());  
-      pid = wait(NULL);
-      	fclose(fo);
-//      
-//       bzero(buffer, 1000);
-//      read(mypipefd2[0],buffer,1000); // mypipefd[0] is input mypipefd[1] is output
-//      close(mypipefd2[0]);
-//      printf(buffer); 
-//      
-//      close(mypipefd[1]);
-//      close(mypipefd2[1]);
-//      printf("before\n");
-//      
-//      bzero(buffer, 1000);
-//      read(mypipefd[0],buffer,1000);
-//     // printf("MAXXXXX %s\n",buffer);
-//      close(mypipefd[0]);
-      
-     // bzero(buffer, 1000);
-      //read(mypipefd2[0],buffer,1000);
-      //printf(buffer);
-      //close(mypipefd2[0]);
-//      printf("after\n");
-//      printf(buffer);
-     
-     // printf("hello my friend\n");
-     //the order of the reads is important  sum max min should be order!!!
     
-     
-  // 
+    
+      	fclose(fo);
+
     return;
       
 
 }
+
