@@ -9,7 +9,7 @@
 
 
 int main(int argc, char *argv[]){
-    FILE * fo = freopen("outputC.txt","w",stdout);
+   FILE * fo = freopen("outputC.txt","w",stdout);
     char* fileName = argv[1];
     char buffer[1000];
     int max=0;
@@ -50,10 +50,12 @@ int main(int argc, char *argv[]){
      fflush(stdout); 
      int mypipefd[2];
      int thepipefd[2];
+     int finanlpipefd[2];
      int ret;
      char buf[100];
      char buf2[100];
-     ret = pipe(mypipefd);
+     ret = pipe(mypipefd); 
+     pipe(finanlpipefd);
      
      if(ret==-1)
      {
@@ -320,8 +322,7 @@ int main(int argc, char *argv[]){
              /*comparison of max, min, and sum of child 1 and child 2*/
              //printf("THESE ARE THE OVERALL MAX,MIN,SUM VALUES\n");
              sum=sum1+sum2;
-             printf("SUM=%d\n",sum);
-             fflush(stdout);
+             
              
              pid_t oMin;
              oMin = fork();
@@ -337,8 +338,9 @@ int main(int argc, char *argv[]){
                  }else{
                      min=min2;  
                      }
-                  printf("MIN=%d\n",min);
-                 }else{
+                     
+                 
+                
                   pid_t oMax;//getting forked twice
                  oMax = fork();
                  
@@ -354,19 +356,27 @@ int main(int argc, char *argv[]){
                          max=max2;
                        
                      }
+                     printf("SUM=%d\n",sum);
                       printf("MAX=%d\n",max);
+                       printf("MIN=%d\n",min);
+                      
                  }else{
                  //do nothing
+
+                 }
+          
+   
              }
             
-             }
-             
+
             
-             fclose(fo);
+            fclose(fo);
          }
          
          
         
          
+     wait(NULL);
      }  
+
 }
