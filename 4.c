@@ -10,17 +10,29 @@
 #include <ctype.h>
 int ap=0;
 
+char* remSpace(char* expr)
+{
+  char* j = expr;
+  char* k = expr;
+  while(*j != 0)
+  {
+    *j = *k++;
+    if(*j != ' ')
+      j++;
+  }
+  *j = 0;
+  return expr;
+}
+
 int initArray(char* expr){
   int sz = 0;
   int sp=0;
   
   int len = strlen(expr);
-  //printf("length: %d\n",len);
   while(sp<len){
   char tmp= expr[sp];
-  //printf("%c\n",tmp);
   if(tmp == '(' || tmp==')'||tmp==' '){
-  //skip
+  
   sp++;
   }
   else if(tmp=='+' || tmp=='*'){
@@ -41,14 +53,10 @@ int initArray(char* expr){
 }
 int skipParen(char* expr,int sp){
 char tmp= expr[sp];
-//printf("%s\n",expr);
   while(tmp !=')'){
         sp++;
         tmp= expr[sp];
-        
-              printf("%c\n",tmp);
               if(tmp == '(' ){
-              //skip
                 sp = skipParen(expr,sp);
                 
               }
@@ -71,20 +79,14 @@ char tmp= expr[sp];
   return 1;
 }
 void setArray(char* expr,char* arr[]){
-  //printf("test: %s\n",arr[1]);
   char tmp;
   int len  = strlen(expr);
   int sp=0;
-  //printf("init: %s\n",expr);
   if(expr[0] == '('){
-    //printf("cut\n");
     if(expr[len-1] == ')'){
-      //printf("cut\n");
       char * cut=malloc(sizeof(char) * 100);
       strncpy(cut,expr+1, len-2);
       strcpy(expr,cut);
-      //free(cut);
-      //printf("cutted: %s\n",expr);
     }
   }
   if(number(expr)){
@@ -92,18 +94,12 @@ void setArray(char* expr,char* arr[]){
     ap++;
     return;
   }
-  //printf("%s\n",expr);
     while(sp<len){
     tmp= expr[sp];
-    //printf("%c\n",tmp);
     if(tmp == '(' ){
-    //skip
-    //printf("paren\n");
       sp = skipParen(expr,sp);
     }
     else if(tmp=='+' || tmp=='*'){
-    //printf("operator: %c %d\n",tmp,sp);
-    //char* op;
       if(tmp == '+'){
         arr[ap]="+";
       }
@@ -112,15 +108,10 @@ void setArray(char* expr,char* arr[]){
       }
        
        ap++;
-       //p1
        char * str1=malloc(sizeof(char) * 100);
        strncpy(str1,expr,(sp));
-       //printf("str1: %s\n",str1);
-         
-       //p2
        char * str2=malloc(sizeof(char) * 100); 
        strncpy(str2,expr+sp+1,((len)-(sp)));
-       //printf("str2: %s\n",str2);
          
          if(number(str2)){
            setArray(str2, arr);
@@ -132,8 +123,6 @@ void setArray(char* expr,char* arr[]){
          setArray(str2, arr);
          
          }
-         //free(str2);
-         //free(str1);
          
          
        return;
@@ -150,25 +139,18 @@ void uniqueOP(char* init[],int len){
   int idp=0;
   int idm=0;
   int chk=0;
-  //char* tmp=malloc(sizeof(char) * 100);
+  
   while(chk<len){
-  //printf("%s\n",init[chk]);
     if(strcmp(init[chk],"+")==0){
-      //printf("plus\n");
       char* tp=malloc(sizeof(char)*100);
       sprintf(tp,"+%d",idp);
-      //printf("%s\n",tp);
       init[chk]=tp;
-      //printf("%s\n",init[chk]);
       idp++;
     }
     else if(strcmp(init[chk],"*")==0){
-      //printf("mult\n");
       char* tm=malloc(sizeof(char)*100);
       sprintf(tm,"*%d",idm);
-      //printf("%s\n",tm);
       init[chk]=tm;
-      //printf("%s\n",init[chk]);
       idm++;
     }
     
@@ -176,7 +158,6 @@ void uniqueOP(char* init[],int len){
     
     chk++;
     }
-
   return;
 }
 FILE* treeSchema(char * arr[],int sz){
@@ -212,175 +193,158 @@ FILE* treeSchema(char * arr[],int sz){
   return fp;
 
 }
+int createTree(tree_node *thestruct, char* ident) // when node has 0 children what should ident BE?
+{    
 
-//tree_node* createTree(tree_node *thestruct, char* ident)
-//{    
-//    //
-//    FILE* fp = thestruct->fp;
-//    char buffer[100];
-//    char * temp;
-//    if(strcmp(ident,"")==0){
-//    //printf("init\n");
-//    fgets(buffer, 100, fp);
-//    
-//    }
-//    else{
-//    char yayo[100];
-//      while(fgets(buffer,100,fp)){
-//
-//      //you want to compare ident with first letter of buffer
-//      
-//        sprintf(yayo,"%s",buffer);
-//        
-//       char *chk = strtok(yayo," ");
-//       
-//       int foo = strcmp(ident,chk);
-////       printf("\n--chk--\n");
-////       printf("%s%s",ident,chk);
-////       printf("%d",foo);
-////       printf("\n--chk--\n");
-//        if(strcmp(ident,chk)==0){
-//           //printf("break\n");
-//                   break;       
-//        }
-//        
-//      }
-//       
-//    }
-//  printf("%s",buffer);
-//  fflush(stdout);
-//    char *rootNode = strtok(buffer," ");
-//    //printf("%s",buffer);
-//    char *mode = strtok(NULL," ");
-//   //printf("%s\n",strNumChild);
-//    int md = atoi(strNumChild); 
-//    if(md==0){
-//     sleep(1);
-//     return thestruct;
-//    }
-//    node newNode;
-//// printf("%s\n%d\n",rootNode,numKids);
-//    
-//    
-//    thestruct->rootNode = rootNode; 
-//    thestruct->mode = md;
-//     //printf("%s %d \n",rootNode, numKids);
-//    node firstBorn = createNode();     
-//    //printf("%s\n",buffer);
-////    if(numKids ==1){
-////    char *stream = strtok(NULL,"\r\n ");
-////    firstBorn->data = stream; // the last process name may be \n delimated 
-////    }
-////    else{
-//    char *stream = strtok(NULL," ");
-//    firstBorn->data = stream; // the last process name may be \n delimated 
-//    }
-//    
-//    
-//    if(numKids > 1){
-//    int i;
-//    for(i=0;i<numKids-2;i++){     
-//    temp = strtok(NULL," ");      
-//    newNode = addNode(firstBorn,temp);
-//    } 
-//    temp = strtok(NULL,"\n");
-//    newNode = addNode(firstBorn,temp);
-//    }
-//    //
-//     
-//    node tmp;
-//    tmp = firstBorn;
-//    //printf("%d\n",numKids);
-//    int pid;
-////    if(numKids == 1){
-////      pid = fork();
-////      if (pid==0){
-////      //printf("work\n");
-////        createTree(thestruct, tmp->data);
-////      }
-////          wait(NULL);
-////    return thestruct;
-////    
-////    }
-////    else{//
-//              //printf("%s\n",tmp->next);
-//      while(tmp != NULL){
-//       // B =tmp->data 
-//        //printf("%s\n",tmp->data);
-//              // printf("work\n");
-//              // int procNum;
-//               
-//              
-//         pid = fork();
-//         
-//                          if (pid == 0) 
-//                 {
-//                     break; // break the loop if you are child process so processes dont grow by 2^n
-//                 }
-//               if (pid>0){
-//                 wait(NULL);
-//               
-//               }
-//          
-//        tmp = tmp->next;
-//      }  
-//      
-//      
-//          if (pid == 0) 
-//               {
-//                   // child specific stuff. procNum is set to the "child number"
-//                   //recall the function createTree(theStruct)
-//                //printf("activated \n");
-//                   createTree(thestruct, tmp->data);   
-//               } 
-//               
-//               
-////               
-////       wait(NULL);
-////    return thestruct;
-////    }
-//    
-//
-//    wait(NULL);
-//    return thestruct;
-//
-//}
+
+    FILE* fp = thestruct->fp;
+    FILE* getRoot = thestruct->fp;
+    char buffer[100];
+    char* nextChild;
+    node newNode;
+    node firstBorn = createNode();
+    pid_t pid;
+    
+   
+    
+          
+    if(strcmp(ident,"")==0)// for initial condition if empty string was put into ident means first line
+    {  
+        fgets(buffer, 100, fp); 
+    
+    }
+    else //this is to find the line where we create the ident from input file
+    {
+        char yayo[100];
+        while(fgets(buffer,100,fp))
+        {
+           sprintf(yayo,"%s",buffer);     
+           char *chk = strtok(yayo," ");
+           unsigned char hello = ident[0];
+           unsigned char goodbye = chk[0];
+           if(hello==goodbye)
+           {
+               break;       
+           }
+          
+        }
+       
+    }
+    char *rootNode = strtok(buffer," ");
+    
+    char *md = strtok(NULL," ");
+    int mode = atoi(md); 
+    thestruct->rootNode = strdup(rootNode); 
+    thestruct->mode = mode;
+                                             
+    if(rootNode[0]=='+' || rootNode[0]=='*'){
+    // printf("here %c\n",rootNode[0]);
+          thestruct->op = rootNode[0];
+          }
+    
+            int fd[4];
+          int i;
+      		for(i = 0; i < 2; i++){
+      			pipe(&fd[2*i]);//set up pipe
+      		}
+   pid_t* pids = (pid_t*) malloc(sizeof(pid_t) * 10);
+    
+              if(mode==0){
+                  int ans = atoi(thestruct->rootNode);
+                  return ans; // this is returned value to pipe 
+              }
+              else //if number of children > 1
+              {
+                  char *stream = strtok(NULL," ");
+                  firstBorn->data = stream;  
+                          nextChild = strtok(NULL,"\n");
+                          newNode = addNode(firstBorn,nextChild);
+                          i = 0;
+                           
+                          while(i<2)
+                          {
+                          
+                                  pids[i] = fork();
+                                
+                                  wait(NULL);
+                                  if (pids[i] == 0) 
+                                  {
+                                      break;
+                                  }
+                                  else
+                                  {
+                                      firstBorn = firstBorn->next;
+                                      i++;  
+                                  }
+                              
+                              
+                          }  
+                          if (pids[i] == 0 && i<2) 
+                          { 
+                            close(fd[2*i]);
+                             int ans = createTree(thestruct, firstBorn->data);
+                          
+                          write(fd[2*i+1],&ans,sizeof(ans));
+             					     close(fd[2*i+1]);
+                  					exit(0);  
+                          }
+                       
+                          int yoshi[2];
+                          
+                          int status;
+                          for(i = 0; i < 2; i++){
+                          
+                      			close(fd[2*i+1]);
+                      			waitpid(pids[i],&status,0);
+                           
+                      			read(fd[2*i],&yoshi[i],sizeof(yoshi[i]));
+                            
+                      			close(fd[2*i]);
+                            
+                      		}
+                        
+                      		if(rootNode[0] == '+'){
+                         
+     
+                      			return yoshi[0]+ yoshi[1];
+                      		}else if(rootNode[0] == '*'){
+                           
+                      			return yoshi[0] * yoshi[1];
+                      		}         
+          
+                         
+                         exit(0);
+                        return;
+             }
+}
 int main(int argc, char *argv[])
 {
-    //FILE *fo = freopen("output2.txt","w",stdout);
     char* fileName = argv[1];
     char buffer[100];
+      char* ident="";
     FILE* fp;
     fp = fopen(fileName,"r");
-    
+  
   fgets(buffer,100,fp);
   char* expr = malloc(sizeof(char) * 100);
   sprintf(expr,"%s",buffer);
+  expr= remSpace(expr);
   
     int sz;
     sz = initArray(expr);
-    
+   
     char* init[sz];
-    //init[0]=expr;
     setArray(expr,init);
+  
     uniqueOP(init,sz);
     FILE* ts = treeSchema(init,sz);
-//    int chk=0;
-//   // printf("done\n");
-//    while(chk<sz){
-//    printf("%s\n",init[chk]);
-//    chk++;
-//    }
-    
-    //printf("%d\n",sz);
-    //fclose(fi);
-    //fclose(fp);
+    tree_node *initNode = malloc(sizeof(tree_node));
+    initNode->fp = ts;  
 
-//    tree_node *initNode = malloc(sizeof(tree_node));
-//    initNode->fp = ts;  
-//    
-//    initNode = createTree(initNode, "");
-//    
-//    fclose(fo);
+  int ans = createTree(initNode, ident);
+  FILE * fo = fopen("output4.txt","w");
+  fprintf(fo,"Your answer is %d",ans);
+
+   fclose(fp);
+   fclose(fo);
 }
-
