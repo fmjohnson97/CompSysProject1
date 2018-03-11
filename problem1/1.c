@@ -13,6 +13,7 @@
 
 int main(void)
 {
+    FILE* fo = freopen("output1.txt","w",stdout);
     pid_t pid=fork();
     pid_t pid2=fork();
     int status;
@@ -57,4 +58,5 @@ int main(void)
         printf("Terminate A with pid=%d, exit code=%d\n",getpid(),5);
         return 5;
     }
+    fclose(fo);
 }
