@@ -85,7 +85,7 @@ char* fileName = argv[1];
        
        pid1 = wait(NULL);
        
-       sprintf(sums,"Sum = %d\n", sum,array[0]);
+       sprintf(sums,"Sum = %d\n", sum);
        close(fdsum[0]);
         write(fdsum[1], sums, sizeof(sums));
         return; 
